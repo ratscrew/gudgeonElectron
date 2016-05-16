@@ -1,0 +1,22 @@
+{
+  "name": "godgeon_electron",
+  "version": "1.0.0",
+  "description": "electron wrapper",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ratscrew/gudgeonElectron.git"
+  },
+  "author": "Aidan Grace",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ratscrew/gudgeonElectron/issues"
+  },
+  "homepage": "https://github.com/ratscrew/gudgeonElectron#readme",
+  "dependencies": {
+    "electron-prebuilt": "^1.0.2"
+  }
+}
