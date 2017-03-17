@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/ratscrew/gudgeonElectron#readme",
   "dependencies": {
-    "electron-prebuilt": "^1.0.2"
+    "npm install electron-packager -g": "^1.0.2"
   }
 }
