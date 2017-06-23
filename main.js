@@ -4,21 +4,25 @@ const config = require('./config.json')
 const app = electron.app
 const Menu = electron.Menu;
 const dialog = electron.dialog;
+const globalShortcut = electron.globalShortcut
+const ipcMain = electron.ipcMain;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 const fs = require('fs');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow
-
+var loadingWindow
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 1000, height: 700, title: config.title, autoHideMenuBar: config.autoHideMenuBar, webPreferences: { nodeIntegration: false } }) //, webPreferences :{nodeIntegration:false}
+  loadingWindow = new BrowserWindow({ show: true, transparent: true, frame: false, width: 200, hasShadow: true,  height: 150, skipTaskbar: true, resizable: false, title: config.title, autoHideMenuBar: true, webPreferences: { nodeIntegration: true } });
+  loadingWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow = new BrowserWindow({ show: false, width: 1000, height: 700, title: config.title, autoHideMenuBar: config.autoHideMenuBar, webPreferences: { nodeIntegration: true } }) //, webPreferences :{nodeIntegration:false}
   mainWindow.maximize()
-
+  mainWindow.hide()
   // and load the index.html of the app.
   mainWindow.loadURL(config.url) //'http://mlc.crowell.com/Console/#/inbox/' //http://localhost:3000/#/group/571e513b0c726a3268db766e/sheet/572a11f30c726a17a0cd5ca5
-  mainWindow.show()
+
   // Open the DevTools.
   //mainWindow.webContents.openDevTools()
 
@@ -29,6 +33,39 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+  mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
+    item.once('done', (event, state) => {
+      if (state === 'completed') {
+        console.log('Download successfully')
+      } else {
+        console.log(`Download failed: ${state}`)
+      }
+      var filePath = item.getSavePath()
+      if (filePath.indexOf('.xlsx') > -1) openExcel(filePath)
+    })
+  })
+
+
+  creartePopupWindow()
+}
+
+var popupWindow;
+function creartePopupWindow(){
+  let screen = electron.screen
+  popupWindow = new BrowserWindow({ show: false, transparent: true, alwaysOnTop:true, frame: false, width: 1000, hasShadow:true, minWidth: 300, height: 700, skipTaskbar:true, minHeight:200, resizable:true, title: config.title, autoHideMenuBar: true, webPreferences: { nodeIntegration: true } });
+  popupWindow.loadURL(config.popup01Url);
+  const shortcut1 = globalShortcut.register('Control+Space', () => {
+    let mousePosistion = screen.getCursorScreenPoint()
+    popupWindow.show();
+    popupWindow.setPosition(mousePosistion.x, mousePosistion.y,true)
+  });
+  const shortcut2 = globalShortcut.register('Control+Space+T', () => {
+    popupWindow.hide();
+  });
+  // popupWindow.on("blur",()=>{
+  //   console.log('blur')
+  //   popupWindow.hide();
+  // })
 }
 
 // This method will be called when Electron has finished
@@ -52,6 +89,40 @@ app.on('activate', function () {
     createWindow()
   }
 })
+
+app.on('will-quit', () => {
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll()
+})
+
+exports.test = function(_Val){
+  console.log(_Val)
+}
+
+exports.closeLoading = function (_Val) {
+  try {
+    console.log('closeLoading')
+    loadingWindow.hide()
+    loadingWindow.close()
+    mainWindow.show()
+  } catch (error) {
+    console.log('error')
+  }
+  
+
+}
+
+exports.openExcel = openExcel;
+
+
+function openExcel (_file){
+  const exec = require('child_process').exec;
+  //exec("open 'C:\\Users\gracea\Desktop\Tracking Chart.xlsx'").unref(); //C:\Program Files (x86)\Microsoft Office\Office14\EXCEL.EXE" //C:/Users/gracea/Desktop/Tracking Chart.xlsx
+  if (_file) require('child_process').spawn('C://Program Files (x86)/Microsoft Office/Office14/EXCEL.EXE', [_file])
+  console.log('openExcel')
+}
+
+//exports.openExcel()
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

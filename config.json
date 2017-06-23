@@ -1,6 +1,8 @@
 {
-    "localUrl": "http://localhost:3000/home/track",
-    "url": "http://10.250.100.13:3000/#/track",
+    "url": "http://localhost:4200/home/track",
+    "urlProd": "http://10.250.100.13:3000/#/track",
     "title": "Gudgeon",
-    "autoHideMenuBar": false
+    "autoHideMenuBar": false,
+    "popup01Url":"http://localhost:4200/popup"
+    
 }

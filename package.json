@@ -2,7 +2,7 @@
   "name": "godgeon_electron",
   "version": "1.0.0",
   "description": "electron wrapper",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron main.js"
   },
@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/ratscrew/gudgeonElectron#readme",
   "dependencies": {
-    "npm install electron-packager -g": "^1.0.2"
+    "electron-prebuilt": "^1.4.13"
   }
 }
